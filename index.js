@@ -5,7 +5,7 @@ const port = 2000;
 const cors = require('cors');
 
 app.use(bodyParser());
-app.use(cors());
+app.use(cors()); // npm i cors
 
 app.get('/', (req,res) => {
     res.status(200).send('<h1>Welcome to Todo API</h1>')
