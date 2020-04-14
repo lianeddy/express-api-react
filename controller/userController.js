@@ -1,5 +1,6 @@
 const db = require('../database');
 const Crypto = require('crypto');
+const { createJWTToken } = require('../helper/jwt');
 
 module.exports = {
     Register : (req,res) => {
@@ -19,6 +20,8 @@ module.exports = {
                             message : err.message
                         })
                     }
+                    let token = createJWTToken({...results[0]})
+                    console.log(token)
                     res.status(200).send({
                         status : 'Success',
                         data : results[0],
@@ -36,26 +39,35 @@ module.exports = {
             if(err){
                 res.status(500).send(err.message)
             }
-            res.status(200).send({
-                status : 'Success',
-                data : results[0],
-                message : 'Login Successful'
-            })
+            if(results.length !== 0){
+                console.log(results[0])
+                let token = createJWTToken({...results[0]})
+                console.log(token)
+
+                res.status(200).send({
+                    status : 'Success',
+                    data : {
+                        ...results[0],
+                        token
+                    },
+                    message : 'Login Successful'
+                })
+            }else{
+                res.status(404).send({
+                    status : 'Not Found',
+                    message : 'User not Found'
+                })
+            }
         })
     },
     keepLogin : (req,res) => {
-        let { username, password } = req.body;
-        // let hashPassword = Crypto.createHmac('sha256', 'kuncirahasia').update(password).digest('hex');
-        let sql = `select id, username, roleId, email, password from users where username = '${username}' and password = '${password}'`;
-        db.query(sql, (err,results) => {
-            if(err){
-                res.status(500).send(err.message)
-            }
-            res.status(200).send({
-                status : 'Success',
-                data : results[0],
-                message : 'Login Successful'
-            })
+        res.status(200).send({
+            status : 'Success',
+            data : {
+                ...req.user,
+                token : req.token
+            },
+            message : 'Authorized'
         })
     }
 };

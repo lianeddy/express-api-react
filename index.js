@@ -3,8 +3,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 2000;
 const cors = require('cors');
+const bearerToken = require('express-bearer-token');
 
 app.use(bodyParser());
+app.use(bearerToken());
+app.use
 app.use(cors()); // npm i cors
 
 app.get('/', (req,res) => {
