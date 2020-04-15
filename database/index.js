@@ -8,4 +8,5 @@ const db = mysql.createConnection({
     port : 3306
 });
 
+// const query = util.promisify(db.query).bind(db);
 module.exports = db;

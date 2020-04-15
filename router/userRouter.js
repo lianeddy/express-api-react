@@ -5,12 +5,14 @@ const { auth } = require('../helper/jwt');
 const {
     Register,
     Login,
-    keepLogin
+    keepLogin,
+    emailVerification
 } = userController;
 
 
 router.post('/register', Register);
 router.post('/login', Login);
 router.post('/keep-login', auth ,keepLogin)
+router.post('/verification', emailVerification)
 
 module.exports = router;
