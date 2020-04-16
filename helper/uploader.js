@@ -1,5 +1,5 @@
 const multer = require('multer');
-var fs = require('fs');
+const fs = require('fs');
 
 // Return multer object
 

@@ -8,7 +8,6 @@ module.exports = {
     },
     auth : (req, res, next) => {
             if(req.method !== 'OPTIONS'){
-                console.log(req.token)
                 jwt.verify(req.token, 'kuncirahasia', (error, decoded) => {
                     if(error){
                         return res.status(401).send({
@@ -16,7 +15,7 @@ module.exports = {
 
                         })
                     }
-                    console.log(decoded, 'hasil decrypt')
+                    // console.log(decoded, 'hasil decrypt')
                     req.user = decoded;
                     next()
                 })
