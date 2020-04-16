@@ -10,6 +10,7 @@ app.use(bodyParser());
 app.use(bearerToken());
 app.use(bodyParser.urlencoded({ extended : false }))
 app.use(cors()); // npm i cors
+app.use(express.static('public'))
 
 app.get('/', (req,res) => {
     res.status(200).send('<h1>Welcome to Todo API</h1>')

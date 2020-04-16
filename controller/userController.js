@@ -44,7 +44,6 @@ module.exports = {
                             message : 'Account Created!'
                         })
                     })
-
                 })
             }
         })
@@ -93,7 +92,10 @@ module.exports = {
         let sql = `select * from users where username = '${username}' and password = '${password}'`;
         db.query(sql, (err,results) => {
             if(err){
-                res.status(500).send(err.message)
+                res.status(500).send({
+                    status : 'error',
+                    message : err.message
+                })
             }
             if(results.length !== 0){
                 // console.log(results[0])
@@ -109,7 +111,10 @@ module.exports = {
                     })
                 })
             }else{
-                res.status(404).send('User Not Found')
+                res.status(404).send({
+                    status : 'Not Found',
+                    message : 'Verification Failed'
+                })
             }
         })
     }

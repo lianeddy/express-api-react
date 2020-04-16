@@ -7,7 +7,11 @@ module.exports = {
             if(err){
                 res.status(500).send(err.message)
             }
-            res.status(200).send(results)
+            res.status(200).send({
+                dataList : results,
+                status : 'Success',
+                message : 'Fetch Successful'
+            })
         })
     },
     addTodo : (req,res) => {
