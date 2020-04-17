@@ -1,7 +1,7 @@
-const db = require('../database');
+const { db } = require('../database');
 const Crypto = require('crypto');
 const { createJWTToken } = require('../helper/jwt');
-const transporter = require('../helper/nodemailer');
+const {transporter} = require('../helper/nodemailer');
 
 module.exports = {
     Register : (req,res) => {

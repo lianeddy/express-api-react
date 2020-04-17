@@ -1,4 +1,4 @@
-const db = require('../database');
+const { db, query } = require('../database');
 const { uploader } = require('../helper/uploader');
 const fs = require('fs');
 
@@ -23,7 +23,9 @@ module.exports = {
             upload(req,res, (err) => {
                 const { image } = req.files;
                 const { todo } = req.body;
+                console.log(image)
                 const imagePath = image ? `${path}/${image[0].filename}` : null
+                // public/images/TDO123123123123
                 console.log(imagePath) // simpen di database
                 console.log(todo)
 
@@ -84,5 +86,37 @@ module.exports = {
                 message : 'Data Deleted!' 
             })
         })
+    },
+    getTodoPromise : async (req,res) => {
+        let { id } = req.params;
+        let sql = `select * from todo where userId = ${id}`;
+        query(sql)
+        .then((response) => {
+            res.status(201).send({
+                status : 'success',
+                data : response,
+                message : 'Fetch Data Success!' 
+            })
+        })
+        .catch((err) => {
+            res.status(500).send({
+                status : 'Error',
+                message : 'Fetch Data Failed!' 
+            })
+        })
+        // try{
+        //     let response = await query(sql)
+        //     console.log(response)
+        //     res.status(201).send({
+        //         status : 'success',
+        //         data : response,
+        //         message : 'Fetch Data Success!' 
+        //     })
+        // }catch(err){
+        //     res.status(500).send({
+        //         status : 'Error',
+        //         message : 'Fetch Data Failed!' 
+        //     })
+        // }
     }
 }
