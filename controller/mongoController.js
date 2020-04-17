@@ -77,5 +77,22 @@ module.exports = {
                 res.status(200).send(results)
             })
         })
-    }
+    },
+    getMoviesAsync : async (req,res) => {
+        // req.query.limit=10
+        let client = await MongoClient.connect(url)
+
+        let moviesCol = client.db('sample_mflix').collection('movies')
+
+        let data = await moviesCol.find({ 
+            title : {
+                '$regex' : '',
+                '$options' : 'i'
+            },  
+        }).limit(parseInt(10)).toArray()
+        client.close();
+        // let response = await data.toArray()
+
+        res.status(200).send(data)
+    },
 }
