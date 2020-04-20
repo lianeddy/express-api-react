@@ -4,6 +4,7 @@ const { createJWTToken } = require('../helper/jwt');
 const {transporter} = require('../helper/nodemailer');
 
 module.exports = {
+    // CRUD create read update delete
     Register : (req,res) => {
         let { username, password, email } = req.body;
         let hashPassword = Crypto.createHmac('sha256', 'kuncirahasia').update(password).digest('hex');

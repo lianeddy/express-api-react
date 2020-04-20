@@ -3,7 +3,7 @@ const { uploader } = require('../helper/uploader');
 const fs = require('fs');
 
 module.exports = {
-    getTodo : (req,res) => {
+    getTodo : (req,res) => { //req = request && res = response
         let sql = `select id, todo, imagePath from todo where userId = ${req.params.id}`;
         db.query(sql, (err,results) => {
             if(err){
