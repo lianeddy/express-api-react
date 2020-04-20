@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 2000;
+const port = process.env.PORT || 2000;
 const cors = require('cors');
 const bearerToken = require('express-bearer-token');
 const { transporter, transportAwait } = require('./helper/nodemailer');
@@ -49,8 +49,8 @@ const {
     mongoRouter
 } = require('./router');
 
-app.use('/users', userRouter);
-app.use('/todo', todoRouter);
-app.use('/mongo', mongoRouter);
+app.use('/users', userRouter); // localhost:2000/users
+app.use('/todo', todoRouter); // axios.get(localhost:2000/todo/get-todo
+app.use('/mongo', mongoRouter); // // localhost:2000/mongo
 
 app.listen(port, () => console.log(`API active at port ${port}`));
