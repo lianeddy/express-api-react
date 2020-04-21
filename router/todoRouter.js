@@ -16,4 +16,4 @@ router.post('/edit-todo/:id',auth ,editTodo);
 router.delete('/delete-todo/:id',auth, deleteTodo);
 router.get('/get-todo-prom/:id', getTodoPromise);
 
-module.exports = router;
+module.exports = router; // IMPORTANT
