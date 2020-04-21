@@ -59,19 +59,59 @@ module.exports = {
         // })
     },
     editTodo : (req,res) => {
-        let { todo } = req.body;
+        // ada gambar atau engga
+        // if ada gambar = gambar lama yang API dihapus
+        // upload file baru -> dapat imagePath
+        // imagePath disimpan di database
+        // let { todo } = req.body;
         let { id } = req.params;
 
-        let sql = `update todo set todo = '${todo}' where id = ${id}`;
-        db.query(sql, (err, update) => {
-            if(err){
-                res.status(500).send(err.message)
+        let sql = `select * from todo where id = ${id}`;
+        db.query(sql, (err,results) => {
+            if(err) res.status(500).send(err.message)
+
+            let oldImagePath = results[0].imagePath
+            console.log(oldImagePath);
+            try{
+                const path = '/images';
+                const upload = uploader(path, 'TDO').fields([{ name : 'image' }])
+
+                upload(req,res,(err) => {
+                    if(err) res.status(500).send(err.message);
+                    const { image } = req.files;
+                    const { todo } = req.body;
+
+                    const imagePath = image ? `${path}/${image[0].filename}` : oldImagePath
+                    let sql = `update todo set todo = '${todo}', imagePath = '${imagePath}' where id =${id}`;
+                    db.query(sql, (err,results) => {
+                        if(err){
+                            fs.unlinkSync(`./public${imagePath}`)
+                            res.status(500).send(err.message)
+                        }
+                        if(image){
+                            fs.unlinkSync(`/public${oldImagePath}`)
+                        }
+                        res.status(200).send({
+                            status : 'Success',
+                            message : 'Edit Data Successful'
+                        })
+                    })
+                })
+            }catch(err){
+                res.status(500).send(err.message);
             }
-            res.status(201).send({
-                status : 'edited',
-                message : 'Data Edited!' 
-            })
         })
+
+        // let sql = `update todo set todo = '${todo}' where id = ${id}`;
+        // db.query(sql, (err, update) => {
+        //     if(err){
+        //         res.status(500).send(err.message)
+        //     }
+        //     res.status(201).send({
+        //         status : 'edited',
+        //         message : 'Data Edited!' 
+        //     })
+        // })
     },
     deleteTodo : (req,res) => {
         let { id } = req.params;
