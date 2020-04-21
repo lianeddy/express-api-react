@@ -32,7 +32,7 @@ module.exports = {
                 let sql = `insert into todo (todo, userId, imagePath) values('${todo}', ${req.params.id}, '${imagePath}')`;
                 db.query(sql, (err,results) => {
                     if(err){
-                        fs.unlinkSync(`./public${imagePath}`)
+                        fs.unlinkSync(`../public${imagePath}`)
                         res.status(500).send(err.message)
                     }
                     res.status(201).send({
@@ -85,11 +85,11 @@ module.exports = {
                     let sql = `update todo set todo = '${todo}', imagePath = '${imagePath}' where id =${id}`;
                     db.query(sql, (err,results) => {
                         if(err){
-                            fs.unlinkSync(`./public${imagePath}`)
+                            fs.unlinkSync(`../public${imagePath}`)
                             res.status(500).send(err.message)
                         }
                         if(image){
-                            fs.unlinkSync(`/public${oldImagePath}`)
+                            fs.unlinkSync(`./public${oldImagePath}`)
                         }
                         res.status(200).send({
                             status : 'Success',
