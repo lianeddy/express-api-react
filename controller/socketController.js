@@ -19,6 +19,7 @@ module.exports = {
                 if(err) res.status(500).send(err.message)
 
                 req.app.io.emit('Socket', results);
+                // req.app.io.emit('Notif', results);
             })
         })
     }
