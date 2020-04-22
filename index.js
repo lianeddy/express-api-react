@@ -59,11 +59,13 @@ app.post('/send-mail', async (req,res) => {
 const {
     userRouter,
     todoRouter,
-    mongoRouter
+    mongoRouter,
+    socketRouter
 } = require('./router');
 
 app.use('/users', userRouter); // localhost:2000/users
 app.use('/todo', todoRouter); // axios.get(localhost:2000/todo/get-todo
 app.use('/mongo', mongoRouter); // // localhost:2000/mongo
+app.use('/socket', socketRouter); // // localhost:2000/mongo
 
 http.listen(port, () => console.log(`API active at port ${port}`));
