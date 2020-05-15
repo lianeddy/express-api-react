@@ -4,7 +4,7 @@ const fs = require('fs');
 // Return multer object
 
 module.exports = {
-    uploader(destination, fileNamePrefix){
+    uploader: (destination, fileNamePrefix) => {
         let defaultPath = './public';
     
         const storage = multer.diskStorage({
