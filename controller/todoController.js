@@ -4,7 +4,7 @@ const fs = require("fs");
 
 module.exports = {
   getTodo: (req, res) => {
-    let sql = `select id, todo, imagePath from todo where userId = ${req.params.id}`;
+    let sql = `select id, todo, imagePath from todo where userId = ${req.params.id} order by id desc`;
     db.query(sql, (err, results) => {
       if (err) {
         res.status(500).send(err.message);
@@ -21,13 +21,9 @@ module.exports = {
       const path = "/images";
       const upload = uploader(path, "TDO").fields([{ name: "image" }]); //TDD1231231 TDO123123123
       upload(req, res, (err) => {
-        const { image } = req.files;
-        const { todo } = req.body;
-        console.log(image);
+        let { todo } = req.body;
+        let { image } = req.files;
         const imagePath = image ? `${path}/${image[0].filename}` : null;
-        // public/images/TDO123123123123
-        console.log(imagePath); // simpen di database
-        console.log(todo);
 
         let sql = `insert into todo (todo, userId, imagePath) values('${todo}', ${req.params.id}, '${imagePath}')`;
         db.query(sql, (err, results) => {
@@ -42,21 +38,9 @@ module.exports = {
         });
       });
     } catch (err) {
+      console.log(err);
       res.status(500).send(err.message);
     }
-    // let { todo } = req.body;
-    // let { id } = req.params;
-
-    // let sql = `insert into todo (todo, userId) values ('${todo}', ${id})`;
-    // db.query(sql, (err, insert) => {
-    //     if(err){
-    //         res.status(500).send(err.message)
-    //     }
-    //     res.status(201).send({
-    //         status : 'created',
-    //         message : 'Data Created!'
-    //     })
-    // })
   },
   editTodo: (req, res) => {
     // ada gambar atau engga

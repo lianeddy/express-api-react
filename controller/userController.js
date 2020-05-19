@@ -16,7 +16,7 @@ module.exports = {
       if (err) {
         res.status(500).send(err.message);
       } else {
-        let sql = `select id, username, roleId, email, password, verified from users where id = ${insert.insertId}`;
+        let sql = `select id, username, roleId, email, password, verified, displayPicture from users where id = ${insert.insertId}`;
         db.query(sql, (err, results) => {
           if (err) {
             res.status(500).send({
