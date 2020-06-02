@@ -85,9 +85,17 @@ module.exports = {
       }
     });
   },
-  keepLogin: (req, res) => {
+  keepLogin: async (req, res) => {
+    let { id } = req.user;
+    let sql = `select * from users where id = ${id}`;
+    let response = await query(sql);
+    let token = createJWTToken({ ...response[0] });
     res.status(200).send({
       status: "Success",
+      // data: {
+      //   ...response[0],
+      //   token
+      // },
       data: {
         ...req.user,
         token: req.token,
@@ -163,8 +171,8 @@ module.exports = {
   changeDisplayPicture: (req, res) => {
     let { id } = req.params;
 
-    let sql = `select * from users where id = ${id}`;
-    db.query(sql, (err, results) => {
+    let get = `select * from users where id = ${id}`;
+    db.query(get, (err, results) => {
       if (err) res.status(500).send(err.message);
 
       let oldImagePath = results[0].displayPicture;
@@ -186,9 +194,15 @@ module.exports = {
             if (oldImagePath) {
               fs.unlinkSync(`public${oldImagePath}`);
             }
-            res.status(200).send({
-              status: "Success",
-              message: "Edit Data Successful",
+            db.query(get, (err, results) => {
+              if (err) res.status(500).send(err);
+              let token = createJWTToken({ ...results[0] });
+              res.status(200).send({
+                status: "Success",
+                message: "Edit Data Successful",
+                imagePath,
+                token,
+              });
             });
           });
         });
