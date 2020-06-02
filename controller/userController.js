@@ -1,7 +1,10 @@
-const { db } = require("../database");
+const { db, query } = require("../database");
 const Crypto = require("crypto");
 const { createJWTToken } = require("../helper/jwt");
 const { transporter } = require("../helper/nodemailer");
+const encrypt = require("../helper/encrypt");
+const { uploader } = require("../helper/uploader");
+const fs = require("fs");
 
 module.exports = {
   // CRUD create read update delete
@@ -120,6 +123,77 @@ module.exports = {
           status: "Not Found",
           message: "Verification Failed",
         });
+      }
+    });
+  },
+  ChangePassword: async (req, res) => {
+    try {
+      let { id } = req.user;
+      let { oldPass, newPass } = req.body;
+      let get = `select * from users where id = ${id} and password = '${encrypt(
+        oldPass
+      )}'`;
+      let response = await query(get);
+      if (response.length !== 0) {
+        console.log(response);
+        let update = `update users set password = '${encrypt(
+          newPass
+        )}' where id = ${id}`;
+        await query(update);
+        let results = await query(`select * from users where id = ${id}`);
+        let token = createJWTToken({ ...results[0] });
+        res.status(200).send({
+          status: "Edited",
+          message: "Edit Successful",
+          token,
+        });
+      } else {
+        return res.status(404).send({
+          status: "Not Found",
+          message: "Invalid Password",
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({
+        status: "Server Error",
+        message: err.message,
+      });
+    }
+  },
+  changeDisplayPicture: (req, res) => {
+    let { id } = req.params;
+
+    let sql = `select * from users where id = ${id}`;
+    db.query(sql, (err, results) => {
+      if (err) res.status(500).send(err.message);
+
+      let oldImagePath = results[0].displayPicture;
+      console.log(oldImagePath);
+      try {
+        const path = "/displayPictures";
+        const upload = uploader(path, "DSP").fields([{ name: "image" }]);
+
+        upload(req, res, (err) => {
+          if (err) res.status(500).send(err.message);
+          const { image } = req.files;
+
+          const imagePath = image ? `${path}/${image[0].filename}` : null;
+          let sql = `update users set displayPicture = '${imagePath}' where id =${id}`;
+          db.query(sql, (err, results) => {
+            if (err) {
+              res.status(500).send(err.message);
+            }
+            if (oldImagePath) {
+              fs.unlinkSync(`public${oldImagePath}`);
+            }
+            res.status(200).send({
+              status: "Success",
+              message: "Edit Data Successful",
+            });
+          });
+        });
+      } catch (err) {
+        res.status(500).send(err.message);
       }
     });
   },

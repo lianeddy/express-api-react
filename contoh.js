@@ -10,5 +10,5 @@
 
 // console.log(nest)
 
-const fs = require('fs');
-fs.unlinkSync('hehe.js')
+const fs = require("fs");
+fs.unlinkSync(`public/displayPictures/DSP1590735613993.jpg`);
