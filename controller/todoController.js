@@ -1,6 +1,7 @@
 const { db, query } = require("../database");
 const { uploader } = require("../helper/uploader");
 const fs = require("fs");
+const { sendNotification, app_id } = require("../helper/pushNotification");
 
 module.exports = {
   getTodo: (req, res) => {
@@ -20,21 +21,23 @@ module.exports = {
     try {
       const path = "/images";
       const upload = uploader(path, "TDO").fields([{ name: "image" }]); //TDD1231231 TDO123123123
-      upload(req, res, (err) => {
+      upload(req, res, async (err) => {
         let { todo } = req.body;
         let { image } = req.files;
         const imagePath = image ? `${path}/${image[0].filename}` : null;
 
+        let usernameSql = `select username from users where id = ${req.params.id}`;
         let sql = `insert into todo (todo, userId, imagePath) values('${todo}', ${req.params.id}, '${imagePath}')`;
-        db.query(sql, (err, results) => {
-          if (err) {
-            fs.unlinkSync(`../public${imagePath}`);
-            res.status(500).send(err.message);
-          }
-          res.status(201).send({
-            status: "created",
-            message: "Data Created!",
-          });
+        let user = await query(usernameSql);
+        await query(sql);
+        sendNotification({
+          app_id,
+          contents: { en: `${user[0].username} posted a new photo` },
+          included_segments: ["All"],
+        });
+        res.status(201).send({
+          status: "created",
+          message: "Data Created!",
         });
       });
     } catch (err) {
